@@ -1,0 +1,17 @@
+drupalubuntu14devweb:
+  build: .
+  ports:
+    - "90:80"
+    - "451:443"
+  links:
+   - drupalubuntu14devdb:database
+drupalubuntu14devdb:
+  image: mysql:5.5
+  volumes_from:
+    - mysql-drupal-ubuntu14-dev
+  environment:
+    TERM: xterm
+    MYSQL_ROOT_PASSWORD: password
+    MYSQL_USER: user
+    MYSQL_PASSWORD: password
+    MYSQL_DATABASE: drupal
