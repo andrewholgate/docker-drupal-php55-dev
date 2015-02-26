@@ -39,33 +39,39 @@ RUN composer global require phpunit/phpunit:~4.0
 RUN composer global require phpunit/phpunit-skeleton-generator:~2.0
 RUN composer global require halleck45/phpmetrics:~1.0
 RUN composer global require behat/behat:~2.0
-#RUN composer global require humbug/humbug:@dev
-RUN git clone https://github.com/padraic/humbug.git
-RUN composer install -d humbug
 
 # Symlink PHP Code Sniffer standards.
-RUN ln -s $COMPOSER_HOME/vendor/drupal/coder/coder_sniffer/Drupal $COMPOSER_HOME/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/
-RUN ln -s $COMPOSER_HOME/vendor/andrewholgate/drupalstrict/DrupalStrict $COMPOSER_HOME/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/
+RUN ln -s $COMPOSER_HOME/vendor/drupal/coder/coder_sniffer/Drupal $COMPOSER_HOME/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/ && \
+    ln -s $COMPOSER_HOME/vendor/andrewholgate/drupalstrict/DrupalStrict $COMPOSER_HOME/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/
 
 USER root
 # Add tools installed via composer to PATH.
 RUN echo "export PATH=/home/ubuntu/.composer/vendor/bin:$PATH" >> /etc/bash.bashrc
 
+# Install Humbug tool, @todo install via Composer once stable.
+#RUN composer global require humbug/humbug:@dev
+RUN wget https://padraic.github.io/humbug/downloads/humbug.phar && \
+    mv humbug.phar /usr/local/bin/humbug && \
+    chmod +x /usr/local/bin/humbug && \
+    wget https://padraic.github.io/humbug/downloads/humbug.phar.pubkey && \
+    mv humbug.phar.pubkey /usr/local/bin/humbug.pubkey
+
 # Turn on PHP error reporting
-RUN sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/apache2/php.ini
-RUN sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/cli/php.ini
-RUN sed -ri 's/^error_reporting\s*=.*$/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_NOTICE/g' /etc/php5/apache2/php.ini
-RUN sed -ri 's/^error_reporting\s*=.*$/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_NOTICE/g' /etc/php5/cli/php.ini
-RUN sed -ri 's/^display_startup_errors\s*=\s*Off/display_startup_errors = On/g' /etc/php5/apache2/php.ini
-RUN sed -ri 's/^track_errors\s*=\s*Off/track_errors = On/g' /etc/php5/apache2/php.ini
+RUN sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/apache2/php.ini && \
+    sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/cli/php.ini  && \
+    sed -ri 's/^error_reporting\s*=.*$/error_reporting = -1/g' /etc/php5/apache2/php.ini && \
+    sed -ri 's/^error_reporting\s*=.*$/error_reporting = -1/g' /etc/php5/cli/php.ini && \
+    sed -ri 's/^display_startup_errors\s*=\s*Off/display_startup_errors = On/g' /etc/php5/apache2/php.ini && \
+    sed -ri 's/^track_errors\s*=\s*Off/track_errors = On/g' /etc/php5/apache2/php.ini
 
 # Symlink log files.
 RUN ln -s /var/log/xdebug/xdebug.log /var/www/log/
 
 # Grant ubuntu user access to sudo with no password.
-RUN apt-get -y install sudo
-RUN echo "ubuntu ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-RUN usermod -a -G sudo ubuntu
+RUN apt-get -y install sudo && \
+    echo "ubuntu ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    usermod -a -G sudo ubuntu
+
 
 # Clean-up installation.
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean && apt-get autoremove
