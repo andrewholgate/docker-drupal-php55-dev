@@ -1,8 +1,8 @@
 drupalubuntu14devweb:
   build: .
   ports:
-    - "90:80"
-    - "451:443"
+    - "82:80"
+    - "445:443"
   links:
    - drupalubuntu14devdb:database
 drupalubuntu14devdb:

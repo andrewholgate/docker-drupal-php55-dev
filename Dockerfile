@@ -4,25 +4,27 @@ MAINTAINER Andrew Holgate <andrewholgate@yahoo.com>
 RUN apt-get update
 RUN apt-get -y upgrade
 
+# Install tools for documenting.
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install python-sphinx python-pip doxygen
+RUN DEBIAN_FRONTEND=noninteractive pip install sphinx_rtd_theme breathe
+
 # Install XDebug
 RUN DEBIAN_FRONTEND=noninteractive pecl install xdebug
 COPY xdebug.ini /etc/php5/mods-available/xdebug.ini
-RUN ln -s ../../mods-available/xdebug.ini /etc/php5/apache2/conf.d/20-xdebug.ini
-RUN ln -s ../../mods-available/xdebug.ini /etc/php5/cli/conf.d/20-xdebug.ini
-RUN mkdir /tmp/xdebug && chown www-data:www-data /tmp/xdebug
-RUN mkdir /var/log/xdebug && chown www-data:www-data /var/log/xdebug
+RUN ln -s ../../mods-available/xdebug.ini /etc/php5/apache2/conf.d/20-xdebug.ini && \
+    ln -s ../../mods-available/xdebug.ini /etc/php5/cli/conf.d/20-xdebug.ini && \
+    mkdir /tmp/xdebug && \
+    chown www-data:www-data /tmp/xdebug && \
+    mkdir /var/log/xdebug && \
+    chown www-data:www-data /var/log/xdebug
 
 # Install XHProf
 RUN DEBIAN_FRONTEND=noninteractive pecl install -f xhprof
 COPY xhprof.ini /etc/php5/mods-available/xhprof.ini
 RUN ln -s ../../mods-available/xhprof.ini /etc/php5/apache2/conf.d/20-xhprof.ini
 COPY xhprof.conf /etc/apache2/conf.d/xhprof.conf
-RUN mkdir /tmp/xhprof
-RUN chown www-data:www-data /tmp/xhprof
-
-# Install tools for documenting.
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install python-sphinx python-pip doxygen
-RUN DEBIAN_FRONTEND=noninteractive pip install sphinx_rtd_theme breathe
+RUN mkdir /tmp/xhprof && \
+    chown www-data:www-data /tmp/xhprof
 
 # Install tools via Composer.
 USER ubuntu
@@ -36,6 +38,9 @@ RUN composer global require sebastian/phpcpd:~2.0
 RUN composer global require sebastian/phpdcd:~1.0
 RUN composer global require phploc/phploc:~2.0
 RUN composer global require phpunit/phpunit:~4.0
+RUN composer global require phpunit/php-invoker:~1.0
+RUN composer global require phpunit/dbunit:~1.0
+RUN composer global require phpunit/phpunit-selenium:~1.0
 RUN composer global require phpunit/phpunit-skeleton-generator:~2.0
 RUN composer global require halleck45/phpmetrics:~1.0
 RUN composer global require behat/behat:~2.0
@@ -62,7 +67,11 @@ RUN sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/apache
     sed -ri 's/^error_reporting\s*=.*$/error_reporting = -1/g' /etc/php5/apache2/php.ini && \
     sed -ri 's/^error_reporting\s*=.*$/error_reporting = -1/g' /etc/php5/cli/php.ini && \
     sed -ri 's/^display_startup_errors\s*=\s*Off/display_startup_errors = On/g' /etc/php5/apache2/php.ini && \
-    sed -ri 's/^track_errors\s*=\s*Off/track_errors = On/g' /etc/php5/apache2/php.ini
+    sed -ri 's/^display_startup_errors\s*=\s*Off/display_startup_errors = On/g' /etc/php5/cli/php.ini && \
+    sed -ri 's/^track_errors\s*=\s*Off/track_errors = On/g' /etc/php5/apache2/php.ini && \
+    sed -ri 's/^track_errors\s*=\s*Off/track_errors = On/g' /etc/php5/cli/php.ini && \
+    sed -ri 's/^;xmlrpc_errors\s*=\s*0/xmlrpc_errors = 1/g' /etc/php5/apache2/php.ini && \
+    sed -ri 's/^;xmlrpc_errors\s*=\s*0/xmlrpc_errors = 1/g' /etc/php5/cli/php.ini
 
 # Symlink log files.
 RUN ln -s /var/log/xdebug/xdebug.log /var/www/log/
