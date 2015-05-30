@@ -26,6 +26,9 @@ COPY xhprof.conf /etc/apache2/conf.d/xhprof.conf
 RUN mkdir /tmp/xhprof && \
     chown www-data:www-data /tmp/xhprof
 
+# Install JRE (needed for some testing tools like sitespeed.io) and libs for PhantomJS.
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install default-jre libfreetype6 libfontconfig
+
 # Turn on PHP error reporting
 RUN sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/fpm/php.ini && \
     sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/cli/php.ini  && \
@@ -50,5 +53,8 @@ RUN apt-get -y install sudo && \
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean && apt-get autoremove
 
 RUN /etc/init.d/apache2 restart
+
+# Expose additional ports for test tools.
+EXPOSE 8080 9876 9000
 
 CMD ["/usr/local/bin/run"]

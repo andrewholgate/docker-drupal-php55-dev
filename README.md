@@ -14,6 +14,10 @@ Dockerised Drupal 6 & 7 development environment using PHP 5.5 on Ubuntu 14.04. T
 - [DoxyGen](http://www.doxygen.org) - generate documentation from annotated PHP code. It is used to generate XML which is then interpreted by Sphinx.
 - [Sphinx](http://sphinx-doc.org/) - generate beautiful [Read The Docs](http://docs.readthedocs.org/en/latest/) format using [Breathe](https://breathe.readthedocs.org/) as a bridge to DoxyGen XML output.
 
+## Other
+
+- Java Runtime Environment (JRE) - project dev tools like [sitespeed.io](http://www.sitespeed.io/) need this.
+
 # Installation
 
 ## Create Presistant Database data-only container
