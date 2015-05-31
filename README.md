@@ -16,6 +16,7 @@ Dockerised Drupal 6 & 7 development environment using PHP 5.5 on Ubuntu 14.04. T
 
 ## Other
 
+- [Bower](http://bower.io/) - front-end package management.
 - Java Runtime Environment (JRE) - project dev tools like [sitespeed.io](http://www.sitespeed.io/) need this.
 
 # Installation

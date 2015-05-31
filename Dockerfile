@@ -29,6 +29,9 @@ RUN mkdir /tmp/xhprof && \
 # Install JRE (needed for some testing tools like sitespeed.io) and libs for PhantomJS.
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install default-jre libfreetype6 libfontconfig
 
+# Front-end dev tools
+RUN npm install -g bower
+
 # Turn on PHP error reporting
 RUN sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/fpm/php.ini && \
     sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/cli/php.ini  && \
