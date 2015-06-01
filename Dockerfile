@@ -1,4 +1,4 @@
-FROM drupal-php55:latest
+FROM andrewholgate/drupal-php55:latest
 MAINTAINER Andrew Holgate <andrewholgate@yahoo.com>
 
 RUN apt-get update
