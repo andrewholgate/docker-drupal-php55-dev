@@ -5,6 +5,11 @@ drupalphp55devweb:
     - "445:443"
   links:
    - drupalphp55devdb:database
+  volumes:
+    - ~/.ssh:/home/ubuntu/.ssh
+    - ~/.composer:/home/ubuntu/.composer
+    - ~/.npm:/home/ubuntu/.npm
+    - ~/.npm-packages:/home/ubuntu/.npm-packages
 drupalphp55devdb:
   image: mysql:5.5
   volumes_from:
