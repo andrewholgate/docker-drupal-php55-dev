@@ -1,6 +1,4 @@
-# About
-
-Dockerised Drupal 6 & 7 development environment using PHP 5.5 on Ubuntu 14.04. This image is the development companion to the [docker-drupal-php55](https://github.com/andrewholgate/docker-drupal-php55) project.
+Dockerised Drupal 6, 7 and 8 development environment using PHP 5.5 on Ubuntu 14.04. This image is the development companion to the [docker-drupal-php55](https://github.com/andrewholgate/docker-drupal-php55) project.
 
 # Included Tools
 
@@ -11,7 +9,6 @@ Dockerised Drupal 6 & 7 development environment using PHP 5.5 on Ubuntu 14.04. T
 
 ## Front-end Tools
 
-- [Bower](http://bower.io/) - front-end package management.
 - [Wraith](https://github.com/BBC-News/wraith) - for visual regression testing.
 - [PhantomJS](http://phantomjs.org/) - for smoke tests.
 
@@ -21,6 +18,7 @@ Dockerised Drupal 6 & 7 development environment using PHP 5.5 on Ubuntu 14.04. T
 - [Sphinx](http://sphinx-doc.org/) - generate beautiful [Read The Docs](http://docs.readthedocs.org/en/latest/) format using [Breathe](https://breathe.readthedocs.org/) as a bridge to DoxyGen XML output.
 
 # Other
+- [NodeJS](https://nodejs.org/) - Javascript runtime.
 - Java Runtime Environment (JRE) - project dev tools like [sitespeed.io](http://www.sitespeed.io/) need this.
 
 # Installation
