@@ -1,12 +1,12 @@
 FROM andrewholgate/drupal-php55:latest
 MAINTAINER Andrew Holgate <andrewholgate@yahoo.com>
 
-RUN apt-get update
-RUN apt-get -y upgrade
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 
 # Install tools for documenting.
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install python-sphinx python-pip doxygen
-RUN DEBIAN_FRONTEND=noninteractive pip install sphinx_rtd_theme breathe
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install python-sphinx python-pip doxygen && \
+    DEBIAN_FRONTEND=noninteractive pip install sphinx_rtd_theme breathe
 
 # Install XDebug
 RUN DEBIAN_FRONTEND=noninteractive pecl install xdebug
@@ -29,8 +29,19 @@ RUN mkdir /tmp/xhprof && \
 # Install JRE (needed for some testing tools like sitespeed.io) and libs for PhantomJS.
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install default-jre libfreetype6 libfontconfig
 
-# Front-end tools
-RUN npm install -g bower phantomjs
+# Install Node 4.2.1
+RUN cd /opt && \
+  wget https://nodejs.org/dist/v4.2.1/node-v4.2.1-linux-x64.tar.gz && \
+  tar -xzf node-v4.2.1-linux-x64.tar.gz && \
+  mv node-v4.2.1-linux-x64 node && \
+  cd /usr/local/bin && \
+  ln -s /opt/node/bin/* . && \
+  rm -f /opt/node-v4.2.1-linux-x64.tar.gz
+
+USER ubuntu
+RUN echo 'export PATH="$PATH:$HOME/.npm-packages/bin"' >> ~/.bashrc && \
+    npm config set prefix '~/.npm-packages'
+USER root
 
 # Setup for Wraith
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install imagemagick && \
@@ -40,6 +51,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install imagemagick && \
     /bin/bash -l -c "rvm default" && \
     /bin/bash -l -c "rvm rubygems current" && \
     /bin/bash -l -c "gem install wraith"
+
+# Front-end tools
+RUN npm install -g phantomjs
 
 # Turn on PHP error reporting
 RUN sed -ri 's/^display_errors\s*=\s*Off/display_errors = On/g' /etc/php5/fpm/php.ini && \
